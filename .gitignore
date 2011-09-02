@@ -1,0 +1,10 @@
+tmp/
+lib/jio_ext.*
+ext/libjio/libjio/build/
+ext/libjio/libjio/doc.internal
+ext/libjio/libjio/doc.public
+ext/libjio/libjio/Doxyfile.base
+ext/libjio/libjio/bindings/preload/libjio_preload.o
+ext/libjio/libjio/bindings/preload/libjio_preload.so
+ext/libjio/libjio/bindings/preload/libjio_preload.dylib
+ext/libjio/libjio/bindings/python/build

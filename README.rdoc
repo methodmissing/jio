@@ -1,0 +1,94 @@
+= jio - transactional, journaled file I/O for Ruby
+
+(c) 2011 Lourens Naudé (methodmissing), with API guidance from the libjio (http://blitiri.com.ar/p/libjio/) Python extension
+
+  http://github.com/methodmissing/jio
+
+== Why you may need this
+
+Some problems don't map well to database systems and journaled flat files are often a good fit for append
+logs and Event Sourcing implementations. The API is simple (modeled to known UNIX and libc APIs), there's no external dependencies (we vendor libjio) and is known to work on most POSIX systems. The library (libjio) and thus this Ruby extension guarantees file integrity even after unexpected crashes, never leaving your files in an inconsistent state. Crash recovery is fast and safe as well.
+
+== How it works
+
+On the disk, the file you work on is exactly like a regular one, but a special directory is created to store in-flight transactions (lock file and transaction in contents). For further details see http://blitiri.com.ar/p/libjio/doc/libjio.html
+
+== Requirements
+
+* A POSIX compliant OS, known to work well on Linux, BSD variants and Mac OS X
+* Ruby MRI 1.8 or 1.9 (Rubinius support forthcoming)
+* A C compiler
+
+== Installation
+
+Rubygems installation
+
+    gem install jio # pending upload to rubygems.org
+
+Building from source
+
+    git clone git@github.com:methodmissing/jio.git
+    rake
+
+Running tests
+
+    rake test
+
+== Documentation
+
+RDOC document pending.
+
+== How to use
+
+    # libjio file handle
+    file = JIO.open("file.jio", JIO::RDWR | JIO::CREAT, 0600, JIO::J_LINGER)
+
+    # spawn a new lingering transaction with a write operation
+    trans = file.transaction(JIO::J_LINGER)
+    trans.write('COMMIT', 0)
+
+    # spawn 2 read operations
+    trans.read(2, 2)
+    trans.read(2, 4)
+
+    # Empty views - not committed yet
+    trans.views # [] 
+    # Commit write / read operations to / from disk
+    trans.commit # true
+
+    # View represents the 2 read operations requested earlier
+    trans.views %w(MM IT)
+    trans.committed? # true
+
+    # rollback and cleanup
+    trans.rollback
+    trans.release
+    file.close
+
+    # Assert journal integrity
+    JIO.check("file.jio", 0) # {"reapplied"=>1,
+                             #  "invalid"=>0,
+                             #  "corrupt"=>0,
+                             #  "total"=>1,
+                             #  "in_progress"=>0,
+                             #  "broken"=>0}
+
+See the unit tests for further examples.
+
+== Todo
+
+* Finish RDOC docs for latter chunk of jio_ext.c
+* Implement block API for JIO::File.transaction to ensure resources are released
+* Support vectored I/O readv and writev
+* Support Rubinius
+* More examples
+* Better test coverage
+* Gem release
+* Submit OS X specific Makefile changes from vendor'ed libjio upstream
+* Assert encoding in 1.9 specific environments
+
+== Contact, feedback and bugs
+
+This project is still work in progress and I'm looking for guidance on API design, use cases and any outlier experiences. Please log bugs and suggestions at https://github.com/methodmissing/jio/issues
+
+Thanks !
