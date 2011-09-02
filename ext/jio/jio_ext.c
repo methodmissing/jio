@@ -122,7 +122,10 @@ static VALUE rb_jio_s_open(VALUE jio, VALUE path, VALUE flags, VALUE mode, VALUE
     TRAP_BEG;
     file->fs = jopen(RSTRING_PTR(path), FIX2INT(flags), FIX2INT(mode), FIX2UINT(jflags));
     TRAP_END;
-    if (file->fs == NULL) rb_sys_fail("jopen");
+    if (file->fs == NULL) {
+        xfree(file);
+        rb_sys_fail("jopen");
+    }
     rb_obj_call_init(obj, 0, NULL);
     return obj;
 }
@@ -191,7 +194,10 @@ static VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
     TRAP_BEG;
     trans->trans = jtrans_new(file->fs, FIX2INT(flags));
     TRAP_END;
-    if (trans->trans == NULL) rb_sys_fail("jtrans_new");
+    if (trans->trans == NULL) {
+        xfree(trans);
+        rb_sys_fail("jtrans_new");
+    }
     trans->views = Qnil;
     rb_obj_call_init(transaction, 0, NULL);
     return transaction;
@@ -212,17 +218,22 @@ static VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
 static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
 {
     int ret;
-    VALUE buf;
+    char *buf = NULL;
+    long len;
     GetJioTransaction(obj);
     AssertLength(length);
     AssertOffset(offset);
-    buf = rb_str_new(0, FIX2LONG(length));
+    len = FIX2LONG(length);
+    buf = ALLOCA_N(char, len + 1);
     TRAP_BEG;
-    ret = jtrans_add_r(trans->trans, RSTRING_PTR(buf), (size_t)FIX2LONG(length), (off_t)NUM2OFFT(offset));
+    ret = jtrans_add_r(trans->trans, buf, (size_t)len, (off_t)NUM2OFFT(offset));
     TRAP_END;
-    if (ret == -1) rb_sys_fail("jtrans_add_r");
+    if (ret == -1) {
+       xfree(buf);
+       rb_sys_fail("jtrans_add_r");
+    }
     if (NIL_P(trans->views)) trans->views = rb_ary_new();
-    rb_ary_push(trans->views, JioEncode(buf));
+    rb_ary_push(trans->views, JioEncode(rb_str_new(buf, len)));
     return Qtrue;
 }
 
@@ -516,15 +527,20 @@ static VALUE rb_jio_file_stop_autosync(VALUE obj)
 static VALUE rb_jio_file_read(VALUE obj, VALUE length)
 {
     ssize_t bytes;
-    VALUE buf;
+    char *buf = NULL;
+    long len;
     GetJioFile(obj);
     AssertLength(length);
-    buf = rb_str_new(0, FIX2LONG(length));
+    len = FIX2LONG(length);
+    buf = ALLOCA_N(char, len + 1);
     TRAP_BEG;
-    bytes = jread(file->fs, RSTRING_PTR(buf), (size_t)FIX2LONG(length));
+    bytes = jread(file->fs, buf, (size_t)len);
     TRAP_END;
-    if (bytes == -1) rb_sysfail("jread");
-    return JioEncode(buf);
+    if (bytes == -1) {
+       xfree(buf);
+       rb_sys_fail("jread");
+    }
+    return JioEncode(rb_str_new(buf, len));
 }
 
 /*
@@ -541,16 +557,21 @@ static VALUE rb_jio_file_read(VALUE obj, VALUE length)
 static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
 {
     ssize_t bytes;
-    VALUE buf;
+    char *buf;
+    long len;
     GetJioFile(obj);
     AssertLength(length);
     AssertOffset(offset);
-    buf = rb_str_new(0, FIX2LONG(length));
+    len = FIX2LONG(length);
+    buf = ALLOCA_N(char, len + 1);
     TRAP_BEG;
-    bytes = jpread(file->fs, RSTRING_PTR(buf), (size_t)FIX2LONG(length), (off_t)NUM2OFFT(offset));
+    bytes = jpread(file->fs, buf, (size_t)FIX2LONG(length), (off_t)NUM2OFFT(offset));
     TRAP_END;
-    if (bytes == -1) rb_sysfail("jpread");
-    return JioEncode(buf);
+    if (bytes == -1) {
+       xfree(buf);
+       rb_sys_fail("jpread");
+    }
+    return JioEncode(rb_str_new(buf, len));
 }
 
 /*
@@ -572,7 +593,7 @@ static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
     TRAP_BEG;
     bytes = jwrite(file->fs, StringValueCStr(buf), (size_t)RSTRING_LEN(buf));
     TRAP_END;
-    if (bytes == -1) rb_sysfail("jwrite");
+    if (bytes == -1) rb_sys_fail("jwrite");
     return INT2NUM(bytes);
 }
 
@@ -596,7 +617,7 @@ static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
     TRAP_BEG;
     bytes = jpwrite(file->fs, StringValueCStr(buf), (size_t)RSTRING_LEN(buf), (off_t)NUM2OFFT(offset));
     TRAP_END;
-    if (bytes == -1) rb_sysfail("jpwrite");
+    if (bytes == -1) rb_sys_fail("jpwrite");
     return INT2NUM(bytes);
 }
 
@@ -620,7 +641,7 @@ static VALUE rb_jio_file_lseek(VALUE obj, VALUE offset, VALUE whence)
     TRAP_BEG;
     off = jlseek(file->fs, (off_t)NUM2OFFT(offset), FIX2INT(whence));
     TRAP_END;
-    if (off == -1) rb_sysfail("jlseek");
+    if (off == -1) rb_sys_fail("jlseek");
     return OFFT2NUM(off);
 }
 
@@ -643,7 +664,7 @@ static VALUE rb_jio_file_truncate(VALUE obj, VALUE length)
     TRAP_BEG;
     len = jtruncate(file->fs, (off_t)NUM2OFFT(length));
     TRAP_END;
-    if (len == -1) rb_sysfail("jtruncate");
+    if (len == -1) rb_sys_fail("jtruncate");
     return OFFT2NUM(len);
 }
 
@@ -665,7 +686,7 @@ static VALUE rb_jio_file_fileno(VALUE obj)
     TRAP_BEG;
     fd = jfileno(file->fs);
     TRAP_END;
-    if (fd == -1) rb_sysfail("jfileno");
+    if (fd == -1) rb_sys_fail("jfileno");
     return INT2NUM(fd);
 }
 
@@ -707,7 +728,7 @@ static VALUE rb_jio_file_tell(VALUE obj)
     TRAP_BEG;
     size = jftell(file->fs);
     TRAP_END;
-    if (size == -1) rb_sysfail("jftell");
+    if (size == -1) rb_sys_fail("jftell");
     return INT2NUM(size);
 }
 
