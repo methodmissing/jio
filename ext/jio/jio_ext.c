@@ -502,6 +502,17 @@ static VALUE rb_jio_file_stop_autosync(VALUE obj)
     TRAP_END;
 }
 
+/*
+ *  call-seq:
+ *     file.read(10)    =>  String
+ *
+ *  Reads from a libjio file handle. Works just like UNIX read(2)
+ *
+ * === Examples
+ *     file.read(10)    =>  String
+ *
+*/
+
 static VALUE rb_jio_file_read(VALUE obj, VALUE length)
 {
     ssize_t bytes;
@@ -515,6 +526,17 @@ static VALUE rb_jio_file_read(VALUE obj, VALUE length)
     if (bytes == -1) rb_sysfail("jread");
     return JioEncode(buf);
 }
+
+/*
+ *  call-seq:
+ *     file.pread(10, 10)    =>  String
+ *
+ *  Reads from a libjio file handle at a given offset. Works just like UNIX pread(2)
+ *
+ * === Examples
+ *     file.pread(10, 10)    =>  String
+ *
+*/
 
 static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
 {
@@ -531,6 +553,17 @@ static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
     return JioEncode(buf);
 }
 
+/*
+ *  call-seq:
+ *     file.write("buffer")    =>  Fixnum
+ *
+ *  Writes to a libjio file handle. Works just like UNIX write(2)
+ *
+ * === Examples
+ *     file.write("buffer")    =>  Fixnum
+ *
+*/
+
 static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
 {
     ssize_t bytes;
@@ -542,6 +575,17 @@ static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
     if (bytes == -1) rb_sysfail("jwrite");
     return INT2NUM(bytes);
 }
+
+/*
+ *  call-seq:
+ *     file.pwrite("buffer", 10)    =>  Fixnum
+ *
+ *  Writes to a libjio file handle at a given offset. Works just like UNIX pwrite(2)
+ *
+ * === Examples
+ *     file.pwrite("buffer", 10)    =>  Fixnum
+ *
+*/
 
 static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
 {
@@ -556,6 +600,17 @@ static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
     return INT2NUM(bytes);
 }
 
+/*
+ *  call-seq:
+ *     file.lseek(10, JIO::SEEK_SET)    =>  Fixnum
+ *
+ *  Reposition the file pointer to the given offset, according to the whence directive.
+ *
+ * === Examples
+ *     file.lseek(10, JIO::SEEK_SET)    =>  Fixnum
+ *
+*/
+
 static VALUE rb_jio_file_lseek(VALUE obj, VALUE offset, VALUE whence)
 {
     off_t off;
@@ -569,6 +624,17 @@ static VALUE rb_jio_file_lseek(VALUE obj, VALUE offset, VALUE whence)
     return OFFT2NUM(off);
 }
 
+/*
+ *  call-seq:
+ *     file.truncate(10)    =>  Fixnum
+ *
+ *  Truncate the file to the given size.
+ *
+ * === Examples
+ *     file.truncate(10)    =>  Fixnum
+ *
+*/
+
 static VALUE rb_jio_file_truncate(VALUE obj, VALUE length)
 {
     off_t len;
@@ -581,6 +647,17 @@ static VALUE rb_jio_file_truncate(VALUE obj, VALUE length)
     return OFFT2NUM(len);
 }
 
+/*
+ *  call-seq:
+ *     file.fileno    =>  Fixnum
+ *
+ *  Return the file descriptor number for the file.
+ *
+ * === Examples
+ *     file.fileno    =>  Fixnum
+ *
+*/
+
 static VALUE rb_jio_file_fileno(VALUE obj)
 {
     int fd;
@@ -592,6 +669,17 @@ static VALUE rb_jio_file_fileno(VALUE obj)
     return INT2NUM(fd);
 }
 
+/*
+ *  call-seq:
+ *     file.rewind    =>  nil
+ *
+ *  Adjusts the file so that the next I/O operation will take place at the beginning of the file.
+ *
+ * === Examples
+ *     file.rewind    =>  nil
+ *
+*/
+
 static VALUE rb_jio_file_rewind(VALUE obj)
 {
     GetJioFile(obj);
@@ -600,6 +688,17 @@ static VALUE rb_jio_file_rewind(VALUE obj)
     TRAP_END;
     return Qnil;
 }
+
+/*
+ *  call-seq:
+ *     file.tell    =>  Fixnum
+ *
+ *  Determine the current file offset.
+ *
+ * === Examples
+ *     file.tell    =>  Fixnum
+ *
+*/
 
 static VALUE rb_jio_file_tell(VALUE obj)
 {
@@ -612,6 +711,17 @@ static VALUE rb_jio_file_tell(VALUE obj)
     return INT2NUM(size);
 }
 
+/*
+ *  call-seq:
+ *     file.eof?    =>  boolean
+ *
+ *  Check for end-of-file.
+ *
+ * === Examples
+ *     file.eof?    =>  boolean
+ *
+*/
+
 static VALUE rb_jio_file_eof_p(VALUE obj)
 {
     GetJioFile(obj);
@@ -619,6 +729,17 @@ static VALUE rb_jio_file_eof_p(VALUE obj)
     return (jfeof(file->fs) != 0) ? Qtrue : Qfalse;
     TRAP_END;
 }
+
+/*
+ *  call-seq:
+ *     file.error?    =>  boolean
+ *
+ *  Determines if an error condition has occurred.
+ *
+ * === Examples
+ *     file.error?    =>  boolean
+ *
+*/
 
 static VALUE rb_jio_file_error_p(VALUE obj)
 {
@@ -630,6 +751,17 @@ static VALUE rb_jio_file_error_p(VALUE obj)
     if (res == 0) return Qfalse;
     return INT2NUM(res);
 }
+
+/*
+ *  call-seq:
+ *     file.clearerr    =>  nil
+ *
+ *  Resets the error flag for this file, if any.
+ *
+ * === Examples
+ *     file.clearerr    =>  nil
+ *
+*/
 
 static VALUE rb_jio_file_clearerr(VALUE obj)
 {
