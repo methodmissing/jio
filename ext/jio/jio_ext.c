@@ -77,14 +77,14 @@ static VALUE jio_empty_view;
 /*
  *  Generic transaction error handler
  */
-static inline VALUE transaction_result(int ret, const char *ctx)
+static inline VALUE transaction_result(ssize_t ret, const char *ctx)
 {
     char err_buf[BUFSIZ];
     if (ret >= 0) return Qtrue;
     if (ret == -1) snprintf(err_buf, BUFSIZ, "JIO transaction error on %s (atomic warranties preserved)", ctx);
     if (ret == -2) snprintf(err_buf, BUFSIZ, "JIO transaction error on %s (atomic warranties broken)", ctx);
     rb_sys_fail(err_buf);
-    return Qnil;
+    return IN2NUM(ret);
 }
 
 /*
@@ -219,21 +219,22 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
 {
     int ret;
     char *buf = NULL;
-    long len;
+    ssize_t len;
     GetJioTransaction(obj);
     AssertLength(length);
     AssertOffset(offset);
-    len = FIX2LONG(length);
-    buf = ALLOCA_N(char, len + 1);
+    len = (ssize_t)FIX2LONG(length);
+    buf = xmalloc(len + 1);
+    if (buf == NULL) rb_memerror();
     TRAP_BEG;
-    ret = jtrans_add_r(trans->trans, buf, (size_t)len, (off_t)NUM2OFFT(offset));
+    ret = jtrans_add_r(trans->trans, buf, len, (off_t)NUM2OFFT(offset));
     TRAP_END;
     if (ret == -1) {
        xfree(buf);
        rb_sys_fail("jtrans_add_r");
     }
     if (NIL_P(trans->views)) trans->views = rb_ary_new();
-    rb_ary_push(trans->views, JioEncode(rb_str_new(buf, len)));
+    rb_ary_push(trans->views, JioEncode(rb_str_new(buf, (long)len)));
     return Qtrue;
 }
 
@@ -302,7 +303,7 @@ static VALUE rb_jio_transaction_write(VALUE obj, VALUE buf, VALUE offset)
 
 static VALUE rb_jio_transaction_commit(VALUE obj)
 {
-    int ret;
+    ssize_t ret;
     GetJioTransaction(obj);
     TRAP_BEG;
     ret = jtrans_commit(trans->trans);
@@ -325,7 +326,7 @@ static VALUE rb_jio_transaction_commit(VALUE obj)
 
 static VALUE rb_jio_transaction_rollback(VALUE obj)
 {
-    int ret;
+    ssize_t ret;
     VALUE res;
     GetJioTransaction(obj);
     TRAP_BEG;
@@ -528,19 +529,20 @@ static VALUE rb_jio_file_read(VALUE obj, VALUE length)
 {
     ssize_t bytes;
     char *buf = NULL;
-    long len;
+    ssize_t len;
     GetJioFile(obj);
     AssertLength(length);
-    len = FIX2LONG(length);
-    buf = ALLOCA_N(char, len + 1);
+    len = (ssize_t)FIX2LONG(length);
+    buf = xmalloc(len + 1);
+    if (buf == NULL) rb_memerror();
     TRAP_BEG;
-    bytes = jread(file->fs, buf, (size_t)len);
+    bytes = jread(file->fs, buf, len);
     TRAP_END;
     if (bytes == -1) {
        xfree(buf);
        rb_sys_fail("jread");
     }
-    return JioEncode(rb_str_new(buf, len));
+    return JioEncode(rb_str_new(buf, (long)len));
 }
 
 /*
@@ -557,21 +559,22 @@ static VALUE rb_jio_file_read(VALUE obj, VALUE length)
 static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
 {
     ssize_t bytes;
-    char *buf;
-    long len;
+    char *buf = NULL;
+    ssize_t len;
     GetJioFile(obj);
     AssertLength(length);
     AssertOffset(offset);
-    len = FIX2LONG(length);
-    buf = ALLOCA_N(char, len + 1);
+    len = (ssize_t)FIX2LONG(length);
+    buf = xmalloc(len + 1);
+    if (buf == NULL) rb_memerror();
     TRAP_BEG;
-    bytes = jpread(file->fs, buf, (size_t)FIX2LONG(length), (off_t)NUM2OFFT(offset));
+    bytes = jpread(file->fs, buf, len, (off_t)NUM2OFFT(offset));
     TRAP_END;
     if (bytes == -1) {
        xfree(buf);
        rb_sys_fail("jpread");
     }
-    return JioEncode(rb_str_new(buf, len));
+    return JioEncode(rb_str_new(buf, (long)len));
 }
 
 /*
@@ -809,7 +812,6 @@ Init_jio_ext()
     jio_empty_view = rb_ary_new();
 
 #ifdef HAVE_RUBY_ENCODING_H
-    rb_gc_register_address(&binary_encoding);
     binary_encoding = rb_enc_find("binary");
 #endif
 

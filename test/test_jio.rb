@@ -37,7 +37,14 @@ class TestJio < Test::Unit::TestCase
 
   def test_autosync
     file = JIO.open(*OPEN_ARGS)
-    assert file.autosync(1, 1045)
+    assert file.autosync(1, 1024)
+    trans = file.transaction(JIO::J_LINGER)
+    trans.write("CO", 0)
+    trans.write("MM", 2)
+    trans.write("IT", 4)
+    sleep 1.2
+    file.rewind
+    assert_equal "COMMIT", file.read(6)
     assert file.stop_autosync
   ensure
     file.close

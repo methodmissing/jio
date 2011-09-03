@@ -77,7 +77,6 @@ See the unit tests for further examples.
 
 == Todo
 
-* Finish RDOC docs for latter chunk of jio_ext.c
 * Implement block API for JIO::File.transaction to ensure resources are released
 * Support vectored I/O readv and writev
 * Support Rubinius
