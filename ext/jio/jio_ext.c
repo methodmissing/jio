@@ -35,12 +35,14 @@ static rb_encoding *binary_encoding;
  *  libjio wrapper structs
  */
 typedef struct {
-  jfs_t *fs;
+    jfs_t *fs;
 } jfs_wrapper;
 
 typedef struct {
-  jtrans_t *trans;
-  VALUE views;
+    jtrans_t *trans;
+    size_t view_capa;
+    char **views;
+    VALUE views_ary;
 } jtrans_wrapper;
 
 VALUE mJio;
@@ -166,11 +168,24 @@ static VALUE rb_jio_s_check(VALUE jio, VALUE path, VALUE flags)
  */
 static void rb_jio_mark_transaction(jtrans_wrapper *trans)
 {
-    rb_gc_mark(trans->views);
+    rb_gc_mark(trans->views_ary);
+}
+
+static void rb_jio_free_transaction_views(jtrans_wrapper *trans)
+{
+    int i;
+    char *buf = NULL;
+    if (!NIL_P(trans->views_ary)) return;
+    for (i = 0; i < trans->view_capa; ++i) {
+       buf = trans->views[i];
+       if (buf != NULL) xfree(buf);
+    }
+    xfree(trans->views);
 }
 
 static void rb_jio_free_transaction(jtrans_wrapper *trans)
 {
+    rb_jio_free_transaction_views(trans);
 }
 
 /*
@@ -198,7 +213,9 @@ static VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
         xfree(trans);
         rb_sys_fail("jtrans_new");
     }
-    trans->views = Qnil;
+    trans->views = NULL;
+    trans->view_capa = 0;
+    trans->views_ary = Qnil;
     rb_obj_call_init(transaction, 0, NULL);
     return transaction;
 }
@@ -233,8 +250,8 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
        xfree(buf);
        rb_sys_fail("jtrans_add_r");
     }
-    if (NIL_P(trans->views)) trans->views = rb_ary_new();
-    rb_ary_push(trans->views, JioEncode(rb_str_new(buf, (long)len)));
+    trans->views = (char**)xrealloc(trans->views, (trans->view_capa += 1) * sizeof(char*));
+    trans->views[trans->view_capa - 1] = buf;
     return Qtrue;
 }
 
@@ -254,10 +271,19 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
 static VALUE rb_jio_transaction_views(VALUE obj)
 {
     jtrans_t *t = NULL;
+    int i;
     GetJioTransaction(obj);
     t = trans->trans;
     if (t->flags & J_COMMITTED) {
-        return (NIL_P(trans->views)) ? jio_empty_view : trans->views;
+        if (!NIL_P(trans->views_ary)) return trans->views_ary;
+        if (trans->views != NULL) {
+            trans->views_ary = rb_ary_new();
+            for (i = 0; i < trans->view_capa; ++i) {
+               rb_ary_push(trans->views_ary, JioEncode(rb_str_new2(trans->views[i])));
+            }
+            rb_jio_free_transaction_views(trans);
+            return trans->views_ary;
+        }
     }
     return jio_empty_view;
 }
@@ -333,7 +359,7 @@ static VALUE rb_jio_transaction_rollback(VALUE obj)
     ret = jtrans_rollback(trans->trans);
     TRAP_END;
     res = transaction_result(ret, "rollback");
-    if (!NIL_P(trans->views)) rb_ary_clear(trans->views);
+    if (trans->views != NULL) rb_jio_free_transaction_views(trans);
     return res;
 }
 
