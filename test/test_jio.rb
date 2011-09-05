@@ -38,11 +38,10 @@ class TestJio < Test::Unit::TestCase
   def test_autosync
     file = JIO.open(*OPEN_ARGS)
     assert file.autosync(1, 1024)
-    trans = file.transaction(JIO::J_LINGER)
-    trans.write("CO", 0)
-    trans.write("MM", 2)
-    trans.write("IT", 4)
-    sleep 1.2
+    file.write("CO")
+    file.write("MM")
+    file.write("IT")
+    sleep 1.1
     file.rewind
     assert_equal "COMMIT", file.read(6)
     assert file.stop_autosync
@@ -187,9 +186,9 @@ class TestJio < Test::Unit::TestCase
     assert trans.commit
     assert trans.committed?
     expected = {"reapplied"=>1,
-     "invalid"=>0,
+     "invalid"=>2,
      "corrupt"=>0,
-     "total"=>1,
+     "total"=>3,
      "in_progress"=>0,
      "broken"=>0}
     assert_equal expected, JIO.check(FILE, 0)
