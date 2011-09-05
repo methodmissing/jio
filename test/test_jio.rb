@@ -134,6 +134,29 @@ class TestJio < Test::Unit::TestCase
     file.close
   end
 
+  def test_spawn_transaction_with_block
+    file = JIO.open(*OPEN_ARGS)
+    file.transaction(JIO::J_LINGER) do |trans|
+      assert_instance_of JIO::Transaction, trans
+      trans.write("COMMIT", 0)
+    end
+    assert_equal "COMMIT", file.read(6)
+  ensure
+    file.close
+  end
+
+  def test_spawn_transaction_with_block_error
+    file = JIO.open(*OPEN_ARGS)
+    file.transaction(JIO::J_LINGER) do |trans|
+      assert_instance_of JIO::Transaction, trans
+      trans.write("COMMIT", 0)
+      raise "rollback"
+    end rescue nil
+    assert_not_equal "COMMIT", file.read(6)
+  ensure
+    file.close
+  end
+
   def test_transaction_views
     file = JIO.open(*OPEN_ARGS)
     trans = file.transaction(JIO::J_LINGER)
