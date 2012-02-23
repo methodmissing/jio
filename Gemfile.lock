@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    jio (0.1)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    rake (0.9.2.2)
+    rake-compiler (0.8.0)
+      rake
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  jio!
+  rake
+  rake-compiler (~> 0.8.0)
