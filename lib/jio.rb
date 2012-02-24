@@ -1,28 +1,12 @@
 # encoding: utf-8
 
-require 'jio_ext'
+begin
+  require "jio/jio_ext"
+rescue LoadError
+  require "jio_ext"
+end
 
 module JIO
-  VERSION = '0.1'
-
-  class File
-    alias orig_transaction transaction
-    def transaction(flags)
-      if block_given?
-        begin
-          trans = orig_transaction(flags)
-          yield trans
-        rescue
-          trans.rollback
-          error = true
-          raise
-        ensure
-          trans.commit if !error && !trans.committed?
-          trans.release
-        end
-      else
-        orig_transaction(flags)
-      end
-    end
-  end
 end
+
+require 'jio/file'

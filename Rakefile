@@ -1,5 +1,8 @@
 # encoding: utf-8
 
+require 'rubygems' unless defined?(Gem)
+require 'rake' unless defined?(Rake)
+
 require 'rake/extensiontask'
 require 'rake/testtask'
 begin
@@ -8,43 +11,35 @@ rescue LoadError # fallback to older 1.8.7 rubies
 require 'rake/rdoctask'
 end
 
-spec = eval(IO.read('jio.gemspec'))
+gemspec = eval(IO.read('jio.gemspec'))
 
-task :compile => :build_libjio
-task :clobber => :clobber_libjio
+Gem::PackageTask.new(gemspec) do |pkg|
+end
 
-Rake::ExtensionTask.new('jio', spec) do |ext|
+Rake::ExtensionTask.new('jio', gemspec) do |ext|
   ext.name = 'jio_ext'
   ext.ext_dir = 'ext/jio'
-end
 
-task :clobber_libjio do
-  Dir.chdir "ext/libjio" do
-    sh "make clean"
-  end
+  CLEAN.include 'ext/jio/dst'
+  CLEAN.include 'ext/libjio'
+  CLEAN.include 'lib/**/jio_ext.*'
 end
-
-task :build_libjio do
-  Dir.chdir "ext/libjio" do
-    sh "make"
-  end unless File.exist?("ext/libjio/eio.o")
-end
-
-RDOC_FILES = FileList["README.rdoc", "ext/jio/jio_ext.c", "lib/jio.rb"]
 
 Rake::RDocTask.new do |rd|
-  rd.title = "jio - a libjio wrapper for Ruby"
+  files = FileList["README.rdoc", "lib/**/*.rb", "ext/jio/*.c"]
+  rd.title = "jio - transactional, journaled file I/O for Ruby"
   rd.main = "README.rdoc"
   rd.rdoc_dir = "doc"
-  rd.rdoc_files.include(RDOC_FILES)
+  rd.options << "--promiscuous"
+  rd.rdoc_files.include(files)
 end
 
-desc 'Run JIO tests'
+desc 'Run jio tests'
 Rake::TestTask.new(:test) do |t|
-  t.pattern = "test/test_*.rb"
+  t.test_files = Dir.glob("test/**/test_*.rb")
   t.verbose = true
   t.warning = true
 end
-task :test => :compile
 
+task :test => :compile
 task :default => :test

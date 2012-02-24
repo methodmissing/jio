@@ -1,8 +1,5 @@
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
-
-#include "../libjio/libjio/libjio.h"
-#include "../libjio/libjio/trans.h"
+#include "libjio.h"
+#include "trans.h"
 #include "ruby.h"
 #include <sys/types.h>
 #include <sys/stat.h>
