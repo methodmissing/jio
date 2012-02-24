@@ -41,7 +41,7 @@ static inline VALUE transaction_result(ssize_t ret, const char *ctx)
     if (ret == -1) snprintf(err_buf, BUFSIZ, "JIO transaction error on %s (atomic warranties preserved)", ctx);
     if (ret == -2) snprintf(err_buf, BUFSIZ, "JIO transaction error on %s (atomic warranties broken)", ctx);
     rb_sys_fail(err_buf);
-    return IN2NUM(ret);
+    return INT2NUM(ret);
 }
 
 /*
