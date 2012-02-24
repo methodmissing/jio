@@ -21,18 +21,22 @@
 
 #include <jio_prelude.h>
 
-/*
- *  libjio wrapper structs
- */
-typedef struct {
-    jfs_t *fs;
-} jfs_wrapper;
+#define AssertOffset(off) \
+    Check_Type(off, T_FIXNUM); \
+    if (off < jio_zero) rb_raise(rb_eArgError, "offset must be >= 0"); \
 
-typedef struct {
-    jtrans_t *trans;
-    size_t view_capa;
-    char **views;
-    VALUE views_ary;
-} jtrans_wrapper;
+#define AssertLength(len) \
+    Check_Type(len, T_FIXNUM); \
+    if (len < jio_zero) rb_raise(rb_eArgError, "length must be >= 0"); \
+
+#include <file.h>
+#include <transaction.h>
+
+extern VALUE mJio;
+extern VALUE cJioFile;
+extern VALUE cJioTransaction;
+
+extern VALUE jio_zero;
+extern VALUE jio_empty_view;
 
 #endif
