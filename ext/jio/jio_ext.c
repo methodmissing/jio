@@ -1,46 +1,4 @@
-#include "libjio.h"
-#include "trans.h"
-#include "ruby.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-/*
- *  MRI version agnostic macros
- */
-#ifdef RUBY_VM
-#include <ruby/encoding.h>
-#include <ruby/io.h>
-static rb_encoding *binary_encoding;
-#define JioEncode(str) rb_enc_associate(str, binary_encoding)
-#define TRAP_BEG
-#define TRAP_END
-#else
-#define JioEncode(str) str
-#include "rubyio.h"
-#include "rubysig.h"
-#ifndef RSTRING_PTR
-#define RSTRING_PTR(str) RSTRING(str)->ptr
-#endif
-#ifndef RSTRING_LEN
-#define RSTRING_LEN(s) (RSTRING(s)->len)
-#endif
-#endif
-
-/*
- *  libjio wrapper structs
- */
-typedef struct {
-    jfs_t *fs;
-} jfs_wrapper;
-
-typedef struct {
-    jtrans_t *trans;
-    size_t view_capa;
-    char **views;
-    VALUE views_ary;
-} jtrans_wrapper;
+#include <jio_ext.h>
 
 VALUE mJio;
 VALUE cJioFile;
