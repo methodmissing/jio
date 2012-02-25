@@ -33,7 +33,7 @@ static VALUE rb_jio_s_open(JIO_UNUSED VALUE jio, VALUE path, VALUE flags, VALUE 
     Check_Type(flags, T_FIXNUM);
     Check_Type(mode, T_FIXNUM);
     Check_Type(jflags, T_FIXNUM);
-    obj = Data_Make_Struct(cJioFile, jfs_wrapper, rb_jio_mark_file, rb_jio_free_file, file);
+    obj = Data_Make_Struct(rb_cJioFile, jfs_wrapper, rb_jio_mark_file, rb_jio_free_file, file);
     TRAP_BEG;
     file->fs = jopen(RSTRING_PTR(path), FIX2INT(flags), FIX2INT(mode), FIX2UINT(jflags));
     TRAP_END;
@@ -464,24 +464,24 @@ void _init_rb_jio_file()
 {
     rb_define_module_function(mJio, "open", rb_jio_s_open, 4);
 
-    cJioFile = rb_define_class_under(mJio, "File", rb_cObject);
+    rb_cJioFile = rb_define_class_under(mJio, "File", rb_cObject);
 
-    rb_define_method(cJioFile, "sync", rb_jio_file_sync, 0);
-    rb_define_method(cJioFile, "close", rb_jio_file_close, 0);
-    rb_define_method(cJioFile, "move_journal", rb_jio_file_move_journal, 1);
-    rb_define_method(cJioFile, "autosync", rb_jio_file_autosync, 2);
-    rb_define_method(cJioFile, "stop_autosync", rb_jio_file_stop_autosync, 0);
-    rb_define_method(cJioFile, "read", rb_jio_file_read, 1);
-    rb_define_method(cJioFile, "pread", rb_jio_file_pread, 2);
-    rb_define_method(cJioFile, "write", rb_jio_file_write, 1);
-    rb_define_method(cJioFile, "pwrite", rb_jio_file_pwrite, 2);
-    rb_define_method(cJioFile, "lseek", rb_jio_file_lseek, 2);
-    rb_define_method(cJioFile, "truncate", rb_jio_file_truncate, 1);
-    rb_define_method(cJioFile, "fileno", rb_jio_file_fileno, 0);
-    rb_define_method(cJioFile, "rewind", rb_jio_file_rewind, 0);
-    rb_define_method(cJioFile, "tell", rb_jio_file_tell, 0);
-    rb_define_method(cJioFile, "eof?", rb_jio_file_eof_p, 0);
-    rb_define_method(cJioFile, "error?", rb_jio_file_error_p, 0);
-    rb_define_method(cJioFile, "clearerr", rb_jio_file_clearerr, 0);
-    rb_define_method(cJioFile, "transaction", rb_jio_file_new_transaction, 1);
+    rb_define_method(rb_cJioFile, "sync", rb_jio_file_sync, 0);
+    rb_define_method(rb_cJioFile, "close", rb_jio_file_close, 0);
+    rb_define_method(rb_cJioFile, "move_journal", rb_jio_file_move_journal, 1);
+    rb_define_method(rb_cJioFile, "autosync", rb_jio_file_autosync, 2);
+    rb_define_method(rb_cJioFile, "stop_autosync", rb_jio_file_stop_autosync, 0);
+    rb_define_method(rb_cJioFile, "read", rb_jio_file_read, 1);
+    rb_define_method(rb_cJioFile, "pread", rb_jio_file_pread, 2);
+    rb_define_method(rb_cJioFile, "write", rb_jio_file_write, 1);
+    rb_define_method(rb_cJioFile, "pwrite", rb_jio_file_pwrite, 2);
+    rb_define_method(rb_cJioFile, "lseek", rb_jio_file_lseek, 2);
+    rb_define_method(rb_cJioFile, "truncate", rb_jio_file_truncate, 1);
+    rb_define_method(rb_cJioFile, "fileno", rb_jio_file_fileno, 0);
+    rb_define_method(rb_cJioFile, "rewind", rb_jio_file_rewind, 0);
+    rb_define_method(rb_cJioFile, "tell", rb_jio_file_tell, 0);
+    rb_define_method(rb_cJioFile, "eof?", rb_jio_file_eof_p, 0);
+    rb_define_method(rb_cJioFile, "error?", rb_jio_file_error_p, 0);
+    rb_define_method(rb_cJioFile, "clearerr", rb_jio_file_clearerr, 0);
+    rb_define_method(rb_cJioFile, "transaction", rb_jio_file_new_transaction, 1);
 }

@@ -5,7 +5,7 @@ typedef struct {
     jfs_t *fs;
 } jfs_wrapper;
 
-#define JioAssertFile(obj) JioAssertType(obj, cJioFile, "JIO::File")
+#define JioAssertFile(obj) JioAssertType(obj, rb_cJioFile, "JIO::File")
 #define GetJioFile(obj) \
     jfs_wrapper *file = NULL; \
     JioAssertFile(obj); \

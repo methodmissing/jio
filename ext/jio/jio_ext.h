@@ -37,7 +37,7 @@
 #include <transaction.h>
 
 extern VALUE mJio;
-extern VALUE cJioFile;
+extern VALUE rb_cJioFile;
 extern VALUE cJioTransaction;
 
 extern VALUE jio_zero;

@@ -1,7 +1,7 @@
 #include <jio_ext.h>
 
 VALUE mJio;
-VALUE cJioFile;
+VALUE rb_cJioFile;
 VALUE cJioTransaction;
 
 VALUE jio_zero;
