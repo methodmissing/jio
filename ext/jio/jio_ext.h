@@ -21,6 +21,10 @@
 
 #include <jio_prelude.h>
 
+#define JioAssertType(obj, type, desc) \
+    if (!rb_obj_is_kind_of(obj,type)) \
+        rb_raise(rb_eTypeError, "wrong argument type %s (expected %s): %s", rb_obj_classname(obj), desc, RSTRING_PTR(rb_obj_as_string(obj)));
+
 #define AssertOffset(off) \
     Check_Type(off, T_FIXNUM); \
     if (off < jio_zero) rb_raise(rb_eArgError, "offset must be >= 0"); \

@@ -8,8 +8,10 @@ typedef struct {
     VALUE views_ary;
 } jtrans_wrapper;
 
+#define JioAssertTransaction(obj) JioAssertType(obj, cJioTransaction, "JIO::Transaction")
 #define GetJioTransaction(obj) \
     jtrans_wrapper *trans = NULL; \
+    JioAssertTransaction(obj); \
     Data_Get_Struct(obj, jtrans_wrapper, trans); \
     if (!trans) rb_raise(rb_eTypeError, "uninitialized JIO transaction handle!");
 
