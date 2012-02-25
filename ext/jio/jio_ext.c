@@ -59,17 +59,6 @@ Init_jio_ext()
 #endif
 
 /*
- *  Transaction specific constants
- */
-    rb_define_const(mJio, "J_NOLOCK", INT2NUM(J_NOLOCK));
-    rb_define_const(mJio, "J_NOROLLBACK", INT2NUM(J_NOROLLBACK));
-    rb_define_const(mJio, "J_LINGER", INT2NUM(J_LINGER));
-    rb_define_const(mJio, "J_COMMITTED", INT2NUM(J_COMMITTED));
-    rb_define_const(mJio, "J_ROLLBACKED", INT2NUM(J_ROLLBACKED));
-    rb_define_const(mJio, "J_ROLLBACKING", INT2NUM(J_ROLLBACKING));
-    rb_define_const(mJio, "J_RDONLY", INT2NUM(J_RDONLY));
-
-/*
  *  Journal check specific constants
  */
     rb_define_const(mJio, "J_ESUCCESS", INT2NUM(J_ESUCCESS));

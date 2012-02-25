@@ -262,6 +262,14 @@ static VALUE rb_jio_transaction_rollbacking_p(VALUE obj)
 
 void _init_rb_jio_transaction()
 {
+    rb_define_const(mJio, "J_NOLOCK", INT2NUM(J_NOLOCK));
+    rb_define_const(mJio, "J_NOROLLBACK", INT2NUM(J_NOROLLBACK));
+    rb_define_const(mJio, "J_LINGER", INT2NUM(J_LINGER));
+    rb_define_const(mJio, "J_COMMITTED", INT2NUM(J_COMMITTED));
+    rb_define_const(mJio, "J_ROLLBACKED", INT2NUM(J_ROLLBACKED));
+    rb_define_const(mJio, "J_ROLLBACKING", INT2NUM(J_ROLLBACKING));
+    rb_define_const(mJio, "J_RDONLY", INT2NUM(J_RDONLY));
+
     rb_cJioTransaction = rb_define_class_under(mJio, "Transaction", rb_cObject);
 
     rb_define_method(rb_cJioTransaction, "read", rb_jio_transaction_read, 2);
