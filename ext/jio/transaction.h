@@ -8,7 +8,7 @@ typedef struct {
     VALUE views_ary;
 } jtrans_wrapper;
 
-#define JioAssertTransaction(obj) JioAssertType(obj, cJioTransaction, "JIO::Transaction")
+#define JioAssertTransaction(obj) JioAssertType(obj, rb_cJioTransaction, "JIO::Transaction")
 #define GetJioTransaction(obj) \
     jtrans_wrapper *trans = NULL; \
     JioAssertTransaction(obj); \

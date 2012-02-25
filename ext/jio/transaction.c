@@ -262,15 +262,15 @@ static VALUE rb_jio_transaction_rollbacking_p(VALUE obj)
 
 void _init_rb_jio_transaction()
 {
-    cJioTransaction = rb_define_class_under(mJio, "Transaction", rb_cObject);
+    rb_cJioTransaction = rb_define_class_under(mJio, "Transaction", rb_cObject);
 
-    rb_define_method(cJioTransaction, "read", rb_jio_transaction_read, 2);
-    rb_define_method(cJioTransaction, "views", rb_jio_transaction_views, 0);
-    rb_define_method(cJioTransaction, "write", rb_jio_transaction_write, 2);
-    rb_define_method(cJioTransaction, "commit", rb_jio_transaction_commit, 0);
-    rb_define_method(cJioTransaction, "rollback", rb_jio_transaction_rollback, 0);
-    rb_define_method(cJioTransaction, "release", rb_jio_transaction_release, 0);
-    rb_define_method(cJioTransaction, "committed?", rb_jio_transaction_committed_p, 0);
-    rb_define_method(cJioTransaction, "rollbacked?", rb_jio_transaction_rollbacked_p, 0);
-    rb_define_method(cJioTransaction, "rollbacking?", rb_jio_transaction_rollbacking_p, 0);
+    rb_define_method(rb_cJioTransaction, "read", rb_jio_transaction_read, 2);
+    rb_define_method(rb_cJioTransaction, "views", rb_jio_transaction_views, 0);
+    rb_define_method(rb_cJioTransaction, "write", rb_jio_transaction_write, 2);
+    rb_define_method(rb_cJioTransaction, "commit", rb_jio_transaction_commit, 0);
+    rb_define_method(rb_cJioTransaction, "rollback", rb_jio_transaction_rollback, 0);
+    rb_define_method(rb_cJioTransaction, "release", rb_jio_transaction_release, 0);
+    rb_define_method(rb_cJioTransaction, "committed?", rb_jio_transaction_committed_p, 0);
+    rb_define_method(rb_cJioTransaction, "rollbacked?", rb_jio_transaction_rollbacked_p, 0);
+    rb_define_method(rb_cJioTransaction, "rollbacking?", rb_jio_transaction_rollbacking_p, 0);
 }

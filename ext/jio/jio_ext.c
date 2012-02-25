@@ -2,7 +2,7 @@
 
 VALUE mJio;
 VALUE rb_cJioFile;
-VALUE cJioTransaction;
+VALUE rb_cJioTransaction;
 
 VALUE jio_zero;
 VALUE jio_empty_view;

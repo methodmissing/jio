@@ -445,7 +445,7 @@ VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
     jtrans_wrapper *trans = NULL;
     GetJioFile(obj);
     Check_Type(flags, T_FIXNUM);
-    transaction = Data_Make_Struct(cJioTransaction, jtrans_wrapper, rb_jio_mark_transaction, rb_jio_free_transaction, trans);
+    transaction = Data_Make_Struct(rb_cJioTransaction, jtrans_wrapper, rb_jio_mark_transaction, rb_jio_free_transaction, trans);
     TRAP_BEG;
     trans->trans = jtrans_new(file->fs, FIX2INT(flags));
     TRAP_END;

@@ -38,7 +38,7 @@
 
 extern VALUE mJio;
 extern VALUE rb_cJioFile;
-extern VALUE cJioTransaction;
+extern VALUE rb_cJioTransaction;
 
 extern VALUE jio_zero;
 extern VALUE jio_empty_view;
