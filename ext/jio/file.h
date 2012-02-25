@@ -3,13 +3,13 @@
 
 typedef struct {
     jfs_t *fs;
-} jfs_wrapper;
+} jio_jfs_wrapper;
 
 #define JioAssertFile(obj) JioAssertType(obj, rb_cJioFile, "JIO::File")
 #define JioGetFile(obj) \
-    jfs_wrapper *file = NULL; \
+    jio_jfs_wrapper *file = NULL; \
     JioAssertFile(obj); \
-    Data_Get_Struct(obj, jfs_wrapper, file); \
+    Data_Get_Struct(obj, jio_jfs_wrapper, file); \
     if (!file) rb_raise(rb_eTypeError, "uninitialized JIO file handle!");
 
 void _init_rb_jio_file();

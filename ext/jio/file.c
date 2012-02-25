@@ -5,12 +5,12 @@
  */
 static void rb_jio_mark_file(void *ptr)
 {
-    jfs_wrapper *file = (jfs_wrapper *)ptr;
+    jio_jfs_wrapper *file = (jio_jfs_wrapper *)ptr;
 }
 
 static void rb_jio_free_file(void *ptr)
 {
-    jfs_wrapper *file = (jfs_wrapper *)ptr;
+    jio_jfs_wrapper *file = (jio_jfs_wrapper *)ptr;
 }
 
 /*
@@ -28,12 +28,12 @@ static void rb_jio_free_file(void *ptr)
 static VALUE rb_jio_s_open(JIO_UNUSED VALUE jio, VALUE path, VALUE flags, VALUE mode, VALUE jflags)
 {
     VALUE obj;
-    jfs_wrapper *file = NULL;
+    jio_jfs_wrapper *file = NULL;
     Check_Type(path, T_STRING);
     Check_Type(flags, T_FIXNUM);
     Check_Type(mode, T_FIXNUM);
     Check_Type(jflags, T_FIXNUM);
-    obj = Data_Make_Struct(rb_cJioFile, jfs_wrapper, rb_jio_mark_file, rb_jio_free_file, file);
+    obj = Data_Make_Struct(rb_cJioFile, jio_jfs_wrapper, rb_jio_mark_file, rb_jio_free_file, file);
     TRAP_BEG;
     file->fs = jopen(RSTRING_PTR(path), FIX2INT(flags), FIX2INT(mode), FIX2UINT(jflags));
     TRAP_END;
