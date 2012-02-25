@@ -57,7 +57,7 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
     int ret;
     char *buf = NULL;
     ssize_t len;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     AssertLength(length);
     AssertOffset(offset);
     len = (ssize_t)FIX2LONG(length);
@@ -92,7 +92,7 @@ static VALUE rb_jio_transaction_views(VALUE obj)
 {
     jtrans_t *t = NULL;
     int i;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     t = trans->trans;
     if (t->flags & J_COMMITTED) {
         if (!NIL_P(trans->views_ary)) return trans->views_ary;
@@ -124,7 +124,7 @@ static VALUE rb_jio_transaction_views(VALUE obj)
 static VALUE rb_jio_transaction_write(VALUE obj, VALUE buf, VALUE offset)
 {
     int ret;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     Check_Type(buf, T_STRING);
     AssertOffset(offset);
     TRAP_BEG;
@@ -150,7 +150,7 @@ static VALUE rb_jio_transaction_write(VALUE obj, VALUE buf, VALUE offset)
 static VALUE rb_jio_transaction_commit(VALUE obj)
 {
     ssize_t ret;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     TRAP_BEG;
     ret = jtrans_commit(trans->trans);
     TRAP_END;
@@ -174,7 +174,7 @@ static VALUE rb_jio_transaction_rollback(VALUE obj)
 {
     ssize_t ret;
     VALUE res;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     TRAP_BEG;
     ret = jtrans_rollback(trans->trans);
     TRAP_END;
@@ -196,7 +196,7 @@ static VALUE rb_jio_transaction_rollback(VALUE obj)
 
 static VALUE rb_jio_transaction_release(VALUE obj)
 {
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     TRAP_BEG;
     jtrans_free(trans->trans);
     TRAP_END;
@@ -217,7 +217,7 @@ static VALUE rb_jio_transaction_release(VALUE obj)
 static VALUE rb_jio_transaction_committed_p(VALUE obj)
 {
     jtrans_t *t = NULL;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     t = trans->trans;
     return (t->flags & J_COMMITTED) ? Qtrue : Qfalse;
 }
@@ -236,7 +236,7 @@ static VALUE rb_jio_transaction_committed_p(VALUE obj)
 static VALUE rb_jio_transaction_rollbacked_p(VALUE obj)
 {
     jtrans_t *t = NULL;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     t = trans->trans;
     return (t->flags & J_ROLLBACKED) ? Qtrue : Qfalse;
 }
@@ -255,7 +255,7 @@ static VALUE rb_jio_transaction_rollbacked_p(VALUE obj)
 static VALUE rb_jio_transaction_rollbacking_p(VALUE obj)
 {
     jtrans_t *t = NULL;
-    GetJioTransaction(obj);
+    JioGetTransaction(obj);
     t = trans->trans;
     return (t->flags & J_ROLLBACKING) ? Qtrue : Qfalse;
 }

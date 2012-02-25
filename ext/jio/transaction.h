@@ -9,7 +9,7 @@ typedef struct {
 } jtrans_wrapper;
 
 #define JioAssertTransaction(obj) JioAssertType(obj, rb_cJioTransaction, "JIO::Transaction")
-#define GetJioTransaction(obj) \
+#define JioGetTransaction(obj) \
     jtrans_wrapper *trans = NULL; \
     JioAssertTransaction(obj); \
     Data_Get_Struct(obj, jtrans_wrapper, trans); \
