@@ -18,11 +18,11 @@ static inline VALUE transaction_result(ssize_t ret, const char *ctx)
  */
 void rb_jio_mark_transaction(void *ptr)
 {
-    jtrans_wrapper *trans = (jtrans_wrapper *)ptr;
+    jio_jtrans_wrapper *trans = (jio_jtrans_wrapper *)ptr;
     rb_gc_mark(trans->views_ary);
 }
 
-static void rb_jio_free_transaction_views(jtrans_wrapper *trans)
+static void rb_jio_free_transaction_views(jio_jtrans_wrapper *trans)
 {
     int i;
     char *buf = NULL;
@@ -36,7 +36,7 @@ static void rb_jio_free_transaction_views(jtrans_wrapper *trans)
 
 void rb_jio_free_transaction(void *ptr)
 {
-    jtrans_wrapper *trans = (jtrans_wrapper *)ptr;
+    jio_jtrans_wrapper *trans = (jio_jtrans_wrapper *)ptr;
     rb_jio_free_transaction_views(trans);
 }
 

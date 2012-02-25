@@ -442,10 +442,10 @@ static VALUE rb_jio_file_clearerr(VALUE obj)
 VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
 {
     VALUE transaction;
-    jtrans_wrapper *trans = NULL;
+    jio_jtrans_wrapper *trans = NULL;
     JioGetFile(obj);
     Check_Type(flags, T_FIXNUM);
-    transaction = Data_Make_Struct(rb_cJioTransaction, jtrans_wrapper, rb_jio_mark_transaction, rb_jio_free_transaction, trans);
+    transaction = Data_Make_Struct(rb_cJioTransaction, jio_jtrans_wrapper, rb_jio_mark_transaction, rb_jio_free_transaction, trans);
     TRAP_BEG;
     trans->trans = jtrans_new(file->fs, FIX2INT(flags));
     TRAP_END;
