@@ -25,7 +25,7 @@ static void rb_jio_free_file(void *ptr)
  *
 */
 
-static VALUE rb_jio_s_open(VALUE jio, VALUE path, VALUE flags, VALUE mode, VALUE jflags)
+static VALUE rb_jio_s_open(JIO_UNUSED VALUE jio, VALUE path, VALUE flags, VALUE mode, VALUE jflags)
 {
     VALUE obj;
     jfs_wrapper *file = NULL;

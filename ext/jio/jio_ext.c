@@ -22,7 +22,7 @@ rb_encoding *binary_encoding;
  *
 */
 
-static VALUE rb_jio_s_check(VALUE jio, VALUE path, VALUE flags)
+static VALUE rb_jio_s_check(JIO_UNUSED VALUE jio, VALUE path, VALUE flags)
 {
     int ret;
     VALUE result;
