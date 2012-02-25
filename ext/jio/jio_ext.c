@@ -11,6 +11,13 @@ VALUE jio_empty_view;
 rb_encoding *binary_encoding;
 #endif
 
+static VALUE jio_s_total;
+static VALUE jio_s_invalid;
+static VALUE jio_s_in_progress;
+static VALUE jio_s_broken;
+static VALUE jio_s_corrupt;
+static VALUE jio_s_reapplied;
+
 /*
  *  call-seq:
  *     JIO.check("/path/file", JIO::J_CLEANUP)    =>  Hash
@@ -33,12 +40,12 @@ static VALUE rb_jio_s_check(JIO_UNUSED VALUE jio, VALUE path, VALUE flags)
     if (ret == J_ENOMEM) rb_memerror();
     if (ret < 0) rb_sys_fail("jfsck");
     result = rb_hash_new();
-    rb_hash_aset(result, rb_str_new2("total"), INT2NUM(res.total));
-    rb_hash_aset(result, rb_str_new2("invalid"), INT2NUM(res.invalid));
-    rb_hash_aset(result, rb_str_new2("in_progress"), INT2NUM(res.in_progress));
-    rb_hash_aset(result, rb_str_new2("broken"), INT2NUM(res.broken));
-    rb_hash_aset(result, rb_str_new2("corrupt"), INT2NUM(res.corrupt));
-    rb_hash_aset(result, rb_str_new2("reapplied"), INT2NUM(res.reapplied));
+    rb_hash_aset(result, jio_s_total, INT2NUM(res.total));
+    rb_hash_aset(result, jio_s_invalid, INT2NUM(res.invalid));
+    rb_hash_aset(result, jio_s_in_progress, INT2NUM(res.in_progress));
+    rb_hash_aset(result, jio_s_broken, INT2NUM(res.broken));
+    rb_hash_aset(result, jio_s_corrupt, INT2NUM(res.corrupt));
+    rb_hash_aset(result, jio_s_reapplied, INT2NUM(res.reapplied));
     return result;
 }
 
@@ -53,6 +60,13 @@ Init_jio_ext()
     jio_zero = INT2NUM(0);
     rb_gc_register_address(&jio_empty_view);
     jio_empty_view = rb_ary_new();
+
+    jio_s_total = ID2SYM(rb_intern("total"));
+    jio_s_invalid = ID2SYM(rb_intern("invalid"));
+    jio_s_in_progress = ID2SYM(rb_intern("in_progress"));
+    jio_s_broken = ID2SYM(rb_intern("broken"));
+    jio_s_corrupt = ID2SYM(rb_intern("corrupt"));
+    jio_s_reapplied = ID2SYM(rb_intern("reapplied"));
 
 #ifdef HAVE_RUBY_ENCODING_H
     binary_encoding = rb_enc_find("binary");

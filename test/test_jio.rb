@@ -208,12 +208,12 @@ class TestJio < Test::Unit::TestCase
     trans.write('COMMIT', 0)
     assert trans.commit
     assert trans.committed?
-    expected = {"reapplied"=>1,
-     "invalid"=>2,
-     "corrupt"=>0,
-     "total"=>3,
-     "in_progress"=>0,
-     "broken"=>0}
+    expected = {:reapplied=>1,
+     :invalid=>2,
+     :corrupt=>0,
+     :total=>3,
+     :in_progress=>0,
+     :broken=>0}
     assert_equal expected, JIO.check(FILE, 0)
   ensure
     trans.release
