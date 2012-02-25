@@ -3,12 +3,14 @@
 /*
  *  GC callbacks for JIO::File
  */
-static void rb_jio_mark_file(jfs_wrapper *file)
+static void rb_jio_mark_file(void *ptr)
 {
+    jfs_wrapper *file = (jfs_wrapper *)ptr;
 }
 
-static void rb_jio_free_file(jfs_wrapper *file)
+static void rb_jio_free_file(void *ptr)
 {
+    jfs_wrapper *file = (jfs_wrapper *)ptr;
 }
 
 /*

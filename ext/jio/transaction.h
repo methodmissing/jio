@@ -13,8 +13,8 @@ typedef struct {
     Data_Get_Struct(obj, jtrans_wrapper, trans); \
     if (!trans) rb_raise(rb_eTypeError, "uninitialized JIO transaction handle!");
 
-void rb_jio_mark_transaction(jtrans_wrapper *trans);
-void rb_jio_free_transaction(jtrans_wrapper *trans);
+void rb_jio_mark_transaction(void *ptr);
+void rb_jio_free_transaction(void *ptr);
 
 VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags);
 
