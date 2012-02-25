@@ -59,7 +59,7 @@ static VALUE rb_jio_s_open(JIO_UNUSED VALUE jio, VALUE path, VALUE flags, VALUE 
 
 static VALUE rb_jio_file_sync(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     return (jsync(file->fs) == 0) ? Qtrue : Qfalse;
     TRAP_END;
@@ -79,7 +79,7 @@ static VALUE rb_jio_file_sync(VALUE obj)
 
 static VALUE rb_jio_file_close(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     return (jclose(file->fs) == 0) ? Qtrue : Qfalse;
     TRAP_END;
@@ -98,7 +98,7 @@ static VALUE rb_jio_file_close(VALUE obj)
 
 static VALUE rb_jio_file_move_journal(VALUE obj, VALUE path)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     Check_Type(path, T_STRING);
     TRAP_BEG;
     return (jmove_journal(file->fs, RSTRING_PTR(path)) == 0) ? Qtrue : Qfalse;
@@ -119,7 +119,7 @@ static VALUE rb_jio_file_move_journal(VALUE obj, VALUE path)
 
 static VALUE rb_jio_file_autosync(VALUE obj, VALUE max_seconds, VALUE max_bytes)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     Check_Type(max_seconds, T_FIXNUM);
     Check_Type(max_bytes, T_FIXNUM);
     TRAP_BEG;
@@ -140,7 +140,7 @@ static VALUE rb_jio_file_autosync(VALUE obj, VALUE max_seconds, VALUE max_bytes)
 
 static VALUE rb_jio_file_stop_autosync(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     return (jfs_autosync_stop(file->fs) == 0) ? Qtrue : Qfalse;
     TRAP_END;
@@ -162,7 +162,7 @@ static VALUE rb_jio_file_read(VALUE obj, VALUE length)
     ssize_t bytes;
     char *buf = NULL;
     ssize_t len;
-    GetJioFile(obj);
+    JioGetFile(obj);
     AssertLength(length);
     len = (ssize_t)FIX2LONG(length);
     buf = xmalloc(len + 1);
@@ -193,7 +193,7 @@ static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
     ssize_t bytes;
     char *buf = NULL;
     ssize_t len;
-    GetJioFile(obj);
+    JioGetFile(obj);
     AssertLength(length);
     AssertOffset(offset);
     len = (ssize_t)FIX2LONG(length);
@@ -223,7 +223,7 @@ static VALUE rb_jio_file_pread(VALUE obj, VALUE length, VALUE offset)
 static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
 {
     ssize_t bytes;
-    GetJioFile(obj);
+    JioGetFile(obj);
     Check_Type(buf, T_STRING);
     TRAP_BEG;
     bytes = jwrite(file->fs, StringValueCStr(buf), (size_t)RSTRING_LEN(buf));
@@ -246,7 +246,7 @@ static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
 static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
 {
     ssize_t bytes;
-    GetJioFile(obj);
+    JioGetFile(obj);
     Check_Type(buf, T_STRING);
     AssertOffset(offset);
     TRAP_BEG;
@@ -270,7 +270,7 @@ static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
 static VALUE rb_jio_file_lseek(VALUE obj, VALUE offset, VALUE whence)
 {
     off_t off;
-    GetJioFile(obj);
+    JioGetFile(obj);
     AssertOffset(offset);
     Check_Type(whence, T_FIXNUM);
     TRAP_BEG;
@@ -294,7 +294,7 @@ static VALUE rb_jio_file_lseek(VALUE obj, VALUE offset, VALUE whence)
 static VALUE rb_jio_file_truncate(VALUE obj, VALUE length)
 {
     off_t len;
-    GetJioFile(obj);
+    JioGetFile(obj);
     AssertLength(length);
     TRAP_BEG;
     len = jtruncate(file->fs, (off_t)NUM2OFFT(length));
@@ -317,7 +317,7 @@ static VALUE rb_jio_file_truncate(VALUE obj, VALUE length)
 static VALUE rb_jio_file_fileno(VALUE obj)
 {
     int fd;
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     fd = jfileno(file->fs);
     TRAP_END;
@@ -338,7 +338,7 @@ static VALUE rb_jio_file_fileno(VALUE obj)
 
 static VALUE rb_jio_file_rewind(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     jrewind(file->fs);
     TRAP_END;
@@ -359,7 +359,7 @@ static VALUE rb_jio_file_rewind(VALUE obj)
 static VALUE rb_jio_file_tell(VALUE obj)
 {
     long size;
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     size = jftell(file->fs);
     TRAP_END;
@@ -380,7 +380,7 @@ static VALUE rb_jio_file_tell(VALUE obj)
 
 static VALUE rb_jio_file_eof_p(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     return (jfeof(file->fs) != 0) ? Qtrue : Qfalse;
     TRAP_END;
@@ -400,7 +400,7 @@ static VALUE rb_jio_file_eof_p(VALUE obj)
 static VALUE rb_jio_file_error_p(VALUE obj)
 {
     int res;
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     res = jferror(file->fs);
     TRAP_END;
@@ -421,7 +421,7 @@ static VALUE rb_jio_file_error_p(VALUE obj)
 
 static VALUE rb_jio_file_clearerr(VALUE obj)
 {
-    GetJioFile(obj);
+    JioGetFile(obj);
     TRAP_BEG;
     jclearerr(file->fs);
     TRAP_END;
@@ -443,7 +443,7 @@ VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
 {
     VALUE transaction;
     jtrans_wrapper *trans = NULL;
-    GetJioFile(obj);
+    JioGetFile(obj);
     Check_Type(flags, T_FIXNUM);
     transaction = Data_Make_Struct(rb_cJioTransaction, jtrans_wrapper, rb_jio_mark_transaction, rb_jio_free_transaction, trans);
     TRAP_BEG;
