@@ -1,19 +1,8 @@
 # encoding: utf-8
 
-require 'test/unit'
-require 'jio'
-require 'fileutils' #19
-require 'timeout'
+require File.join(File.dirname(__FILE__), 'helper')
 
-TMP = File.expand_path(File.join(File.dirname(__FILE__), '..', 'tmp'))
-SANDBOX = File.join(TMP, 'sandbox')
-FileUtils.rm_rf SANDBOX
-FileUtils.mkdir_p SANDBOX
-
-class TestJio < Test::Unit::TestCase
-  FILE = File.join(SANDBOX, 'file.jio')
-  OPEN_ARGS = [FILE, JIO::RDWR | JIO::CREAT | JIO::TRUNC, 0600, JIO::J_LINGER]
-
+class TestJio < JioTestCase
   def test_open_close
     file = JIO.open(*OPEN_ARGS)
     assert_instance_of JIO::File, file
