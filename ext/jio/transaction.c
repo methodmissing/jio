@@ -3,7 +3,7 @@
 /*
  *  Generic transaction error handler
  */
-static inline VALUE transaction_result(ssize_t ret, const char *ctx)
+static inline VALUE rb_jio_transaction_result(ssize_t ret, const char *ctx)
 {
     char err_buf[BUFSIZ];
     if (ret >= 0) return Qtrue;
@@ -154,7 +154,7 @@ static VALUE rb_jio_transaction_commit(VALUE obj)
     TRAP_BEG;
     ret = jtrans_commit(trans->trans);
     TRAP_END;
-    return transaction_result(ret, "commit");
+    return rb_jio_transaction_result(ret, "commit");
 }
 
 /*
@@ -178,7 +178,7 @@ static VALUE rb_jio_transaction_rollback(VALUE obj)
     TRAP_BEG;
     ret = jtrans_rollback(trans->trans);
     TRAP_END;
-    res = transaction_result(ret, "rollback");
+    res = rb_jio_transaction_result(ret, "rollback");
     if (trans->views != NULL) rb_jio_free_transaction_views(trans);
     return res;
 }
