@@ -11,6 +11,10 @@ static void rb_jio_mark_file(void *ptr)
 static void rb_jio_free_file(void *ptr)
 {
     jio_jfs_wrapper *file = (jio_jfs_wrapper *)ptr;
+    if (file) {
+        if (file->fs != NULL && !(file->flags & JIO_FILE_CLOSED)) jclose(file->fs);
+        xfree(file);
+    }
 }
 
 /*
@@ -41,6 +45,7 @@ static VALUE rb_jio_s_open(JIO_UNUSED VALUE jio, VALUE path, VALUE flags, VALUE 
         xfree(file);
         rb_sys_fail("jopen");
     }
+    file->flags = 0;
     rb_obj_call_init(obj, 0, NULL);
     return obj;
 }
@@ -79,10 +84,13 @@ static VALUE rb_jio_file_sync(VALUE obj)
 
 static VALUE rb_jio_file_close(VALUE obj)
 {
+	int ret;
     JioGetFile(obj);
     TRAP_BEG;
-    return (jclose(file->fs) == 0) ? Qtrue : Qfalse;
+    if (jclose(file->fs) != 0) return Qfalse;
     TRAP_END;
+    file->flags |= JIO_FILE_CLOSED;
+    return Qtrue;
 }
 
 /*
@@ -456,6 +464,7 @@ VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
     trans->views = NULL;
     trans->view_capa = 0;
     trans->views_ary = Qnil;
+    trans->flags = 0;
     rb_obj_call_init(transaction, 0, NULL);
     return transaction;
 }

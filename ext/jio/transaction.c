@@ -37,7 +37,11 @@ static void rb_jio_free_transaction_views(jio_jtrans_wrapper *trans)
 void rb_jio_free_transaction(void *ptr)
 {
     jio_jtrans_wrapper *trans = (jio_jtrans_wrapper *)ptr;
-    rb_jio_free_transaction_views(trans);
+    if(trans) {
+        if (trans->trans != NULL && !(trans->flags & JIO_TRANSACTION_RELEASED)) jtrans_free(trans->trans);
+        rb_jio_free_transaction_views(trans);
+        xfree(trans);
+    }
 }
 
 /*
@@ -200,6 +204,7 @@ static VALUE rb_jio_transaction_release(VALUE obj)
     TRAP_BEG;
     jtrans_free(trans->trans);
     TRAP_END;
+    trans->flags |= JIO_TRANSACTION_RELEASED;
     return Qnil;
 }
 

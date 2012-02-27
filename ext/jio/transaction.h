@@ -1,11 +1,14 @@
 #ifndef JIO_TRANSACTION_H
 #define JIO_TRANSACTION_H
 
+#define JIO_TRANSACTION_RELEASED 0x01
+
 typedef struct {
     jtrans_t *trans;
     size_t view_capa;
     char **views;
     VALUE views_ary;
+    int flags;
 } jio_jtrans_wrapper;
 
 #define JioAssertTransaction(obj) JioAssertType(obj, rb_cJioTransaction, "JIO::Transaction")

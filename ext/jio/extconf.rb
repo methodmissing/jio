@@ -94,7 +94,7 @@ end
 # build libjio
 lib = libs_path + "libjio.#{LIBEXT}"
 Dir.chdir libjio_path do
-  sys "make PREFIX=#{dst_path} install", "libjio compile error!"
+  sys "make DEBUG=1 PREFIX=#{dst_path} install", "libjio compile error!"
 end unless File.exist?(lib)
 
 dir_config('jio')

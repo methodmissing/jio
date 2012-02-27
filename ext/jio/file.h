@@ -1,8 +1,11 @@
 #ifndef JIO_FILE_H
 #define JIO_FILE_H
 
+#define JIO_FILE_CLOSED 0x01
+
 typedef struct {
     jfs_t *fs;
+    int flags;
 } jio_jfs_wrapper;
 
 #define JioAssertFile(obj) JioAssertType(obj, rb_cJioFile, "JIO::File")
