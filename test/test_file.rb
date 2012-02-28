@@ -74,7 +74,7 @@ class TestFile < JioTestCase
 
   def test_fileno
     file = JIO.open(*OPEN_ARGS)
-    assert_equal 3, file.fileno
+    assert_instance_of Fixnum, file.fileno
   ensure
     assert file.close
   end
