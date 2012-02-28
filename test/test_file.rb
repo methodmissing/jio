@@ -14,14 +14,14 @@ class TestFile < JioTestCase
     file = JIO.open(*OPEN_ARGS)
     assert file.sync
   ensure
-    file.close
+    assert file.close
   end
 
   def test_move_journal
     file = JIO.open(*OPEN_ARGS)
     assert file.move_journal(SANDBOX)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_autosync
@@ -35,7 +35,7 @@ class TestFile < JioTestCase
     assert_equal "COMMIT", file.read(6)
     assert file.stop_autosync
   ensure
-    file.close
+    assert file.close
   end
 
   def test_read_write
@@ -48,7 +48,7 @@ class TestFile < JioTestCase
     file.pwrite('LMNOPQRS', 0)
     assert_equal 'LMNOPQRS', file.pread(8, 0)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_lseek
@@ -57,7 +57,7 @@ class TestFile < JioTestCase
     file.lseek(2, IO::SEEK_SET)
     assert_equal 'CD', file.read(2)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_truncate
@@ -69,14 +69,14 @@ class TestFile < JioTestCase
     file.truncate(0)
     assert_equal 0, File.size(FILE)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_fileno
     file = JIO.open(*OPEN_ARGS)
     assert_equal 3, file.fileno
   ensure
-    file.close
+    assert file.close
   end
 
   def test_rewind
@@ -85,7 +85,7 @@ class TestFile < JioTestCase
     file.rewind
     assert_equal 'ABCD', file.read(4)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_tell
@@ -93,7 +93,7 @@ class TestFile < JioTestCase
     file.write('ABCD')
     assert_equal 4, file.tell
   ensure
-    file.close
+    assert file.close
   end
 
   def test_eof_p
@@ -103,7 +103,7 @@ class TestFile < JioTestCase
     file.rewind
     assert !file.eof?
   ensure
-    file.close
+    assert file.close
   end
 
   def test_error
@@ -111,6 +111,6 @@ class TestFile < JioTestCase
     file.write('ABCD')
     assert !file.error?
   ensure
-    file.close
+    assert file.close
   end
 end

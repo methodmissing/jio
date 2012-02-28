@@ -9,7 +9,7 @@ class TestTransaction < JioTestCase
     assert_instance_of JIO::Transaction, trans
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 
   def test_spawn_transaction_with_block
@@ -20,7 +20,7 @@ class TestTransaction < JioTestCase
     end
     assert_equal "COMMIT", file.read(6)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_spawn_transaction_with_block_error
@@ -32,7 +32,7 @@ class TestTransaction < JioTestCase
     end rescue nil
     assert_not_equal "COMMIT", file.read(6)
   ensure
-    file.close
+    assert file.close
   end
 
   def test_transaction_views
@@ -43,7 +43,7 @@ class TestTransaction < JioTestCase
     assert_equal [], trans.views
     assert_equal nil, trans.release
   ensure
-    file.close
+    assert file.close
   end
 
   def test_commit_transaction
@@ -66,7 +66,7 @@ class TestTransaction < JioTestCase
     assert trans.rollback
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 
   def test_transaction_committed_p
@@ -77,7 +77,7 @@ class TestTransaction < JioTestCase
     assert trans.committed?
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 
 
@@ -91,7 +91,7 @@ class TestTransaction < JioTestCase
     assert trans.rollbacked?
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 
   def test_transaction_rollbacking_p
@@ -103,6 +103,6 @@ class TestTransaction < JioTestCase
     assert !trans.rollbacking?
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 end

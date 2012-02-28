@@ -18,6 +18,6 @@ class TestJio < JioTestCase
     assert_equal expected, JIO.check(FILE, 0)
   ensure
     trans.release
-    file.close
+    assert file.close
   end
 end
