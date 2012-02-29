@@ -58,7 +58,7 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
     TRAP_END;
     if (ret == -1) rb_sys_fail("jtrans_add_r");
     if (NIL_P(trans->views)) trans->views = rb_ary_new();
-    rb_ary_push(trans->views, buf);
+    rb_ary_push(trans->views, JioEncode(buf));
     return Qtrue;
 }
 
