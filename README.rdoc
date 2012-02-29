@@ -77,12 +77,14 @@ See the unit tests for further examples.
 
 == Todo
 
+* More intuitive API
+* Release the GIL where appropriate
 * Support vectored I/O readv and writev
-* Support Rubinius
+* JRuby support
 * More examples
+* Stress tests
 * Better test coverage
 * Gem release
-* Submit OS X specific Makefile changes from vendor'ed libjio upstream
 * Assert encoding in 1.9 specific environments
 
 == Contact, feedback and bugs
