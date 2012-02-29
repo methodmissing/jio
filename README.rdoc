@@ -1,4 +1,4 @@
-= jio - transactional, journaled file I/O for Ruby
+= jio - transactional, journaled file I/O for Ruby {<img src="https://secure.travis-ci.org/methodmissing/jio.png" alt="Build Status" />}[http://travis-ci.org/methodmissing/jio]
 
 (c) 2011 Lourens Naudé (methodmissing), with API guidance from the libjio (http://blitiri.com.ar/p/libjio/) Python extension
 
