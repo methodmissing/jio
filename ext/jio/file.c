@@ -461,7 +461,7 @@ VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags)
         xfree(trans);
         rb_sys_fail("jtrans_new");
     }
-    trans->views = rb_ary_new();
+    trans->views = Qnil;
     trans->flags = 0;
     rb_obj_call_init(transaction, 0, NULL);
     return transaction;

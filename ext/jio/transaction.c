@@ -57,6 +57,7 @@ static VALUE rb_jio_transaction_read(VALUE obj, VALUE length, VALUE offset)
     ret = jtrans_add_r(trans->trans, RSTRING_PTR(buf), len, (off_t)NUM2OFFT(offset));
     TRAP_END;
     if (ret == -1) rb_sys_fail("jtrans_add_r");
+    if (NIL_P(trans->views)) trans->views = rb_ary_new();
     rb_ary_push(trans->views, buf);
     return Qtrue;
 }
@@ -79,7 +80,7 @@ static VALUE rb_jio_transaction_views(VALUE obj)
     jtrans_t *t = NULL;
     JioGetTransaction(obj);
     t = trans->trans;
-    if (t->flags & J_COMMITTED) return trans->views;
+    if ((t->flags & J_COMMITTED) && !NIL_P(trans->views)) return trans->views;
     return jio_empty_view;
 }
 
@@ -154,7 +155,7 @@ static VALUE rb_jio_transaction_rollback(VALUE obj)
     ret = jtrans_rollback(trans->trans);
     TRAP_END;
     res = rb_jio_transaction_result(ret, "rollback");
-    rb_ary_clear(trans->views);
+    if (!NIL_P(trans->views)) rb_ary_clear(trans->views);
     return res;
 }
 
