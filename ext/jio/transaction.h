@@ -5,9 +5,7 @@
 
 typedef struct {
     jtrans_t *trans;
-    size_t view_capa;
-    char **views;
-    VALUE views_ary;
+    VALUE views;
     int flags;
 } jio_jtrans_wrapper;
 
