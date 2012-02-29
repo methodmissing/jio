@@ -16,6 +16,10 @@ class JioTestCase < Test::Unit::TestCase
 
   undef_method :default_test if method_defined? :default_test
 
+  def setup
+    File.unlink(FILE) if File.exists?(FILE)
+  end
+
   if ENV['STRESS_GC']
     def setup
       GC.stress = true
