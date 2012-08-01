@@ -104,7 +104,7 @@ static VALUE rb_jio_transaction_write(VALUE obj, VALUE buf, VALUE offset)
     Check_Type(buf, T_STRING);
     AssertOffset(offset);
     TRAP_BEG;
-    ret = jtrans_add_w(trans->trans, StringValueCStr(buf), (size_t)RSTRING_LEN(buf), (off_t)NUM2OFFT(offset));
+    ret = jtrans_add_w(trans->trans, RSTRING_PTR(buf), (size_t)RSTRING_LEN(buf), (off_t)NUM2OFFT(offset));
     TRAP_END;
     if (ret == -1) rb_sys_fail("jtrans_add_w");
     return Qtrue;

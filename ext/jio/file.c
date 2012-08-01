@@ -228,7 +228,7 @@ static VALUE rb_jio_file_write(VALUE obj, VALUE buf)
     JioGetFile(obj);
     Check_Type(buf, T_STRING);
     TRAP_BEG;
-    bytes = jwrite(file->fs, StringValueCStr(buf), (size_t)RSTRING_LEN(buf));
+    bytes = jwrite(file->fs, RSTRING_PTR(buf), (size_t)RSTRING_LEN(buf));
     TRAP_END;
     if (bytes == -1) rb_sys_fail("jwrite");
     return INT2NUM(bytes);
@@ -252,7 +252,7 @@ static VALUE rb_jio_file_pwrite(VALUE obj, VALUE buf, VALUE offset)
     Check_Type(buf, T_STRING);
     AssertOffset(offset);
     TRAP_BEG;
-    bytes = jpwrite(file->fs, StringValueCStr(buf), (size_t)RSTRING_LEN(buf), (off_t)NUM2OFFT(offset));
+    bytes = jpwrite(file->fs, RSTRING_PTR(buf), (size_t)RSTRING_LEN(buf), (off_t)NUM2OFFT(offset));
     TRAP_END;
     if (bytes == -1) rb_sys_fail("jpwrite");
     return INT2NUM(bytes);
