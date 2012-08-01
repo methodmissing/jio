@@ -19,7 +19,7 @@
 #define JIO_NOINLINE
 #endif
 
-#include <jio_prelude.h>
+#include "jio_prelude.h"
 
 #define JioAssertType(obj, type, desc) \
     if (!rb_obj_is_kind_of(obj,type)) \
@@ -33,8 +33,8 @@
     Check_Type(len, T_FIXNUM); \
     if (len < jio_zero) rb_raise(rb_eArgError, "length must be >= 0"); \
 
-#include <file.h>
-#include <transaction.h>
+#include "file.h"
+#include "transaction.h"
 
 extern VALUE mJio;
 extern VALUE rb_cJioFile;

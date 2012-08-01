@@ -1,4 +1,4 @@
-#include <jio_ext.h>
+#include "jio_ext.h"
 
 VALUE mJio;
 VALUE rb_cJioFile;
