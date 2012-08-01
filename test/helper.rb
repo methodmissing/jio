@@ -12,7 +12,7 @@ FileUtils.mkdir_p SANDBOX
 
 class JioTestCase < Test::Unit::TestCase
   FILE = File.join(SANDBOX, 'file.jio')
-  OPEN_ARGS = [FILE, JIO::RDWR | JIO::CREAT | JIO::TRUNC, 0600, JIO::J_LINGER]
+  OPEN_ARGS = [FILE, JIO::RDWR | JIO::CREAT | JIO::TRUNC, 0644, JIO::J_LINGER]
 
   undef_method :default_test if method_defined? :default_test
 
