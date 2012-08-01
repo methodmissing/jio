@@ -16,7 +16,7 @@ On the disk, the file you work on is exactly like a regular one, but a special d
 == Requirements
 
 * A POSIX compliant OS, known to work well on Linux, BSD variants and Mac OS X
-* Ruby MRI 1.8 or 1.9 (Rubinius support forthcoming)
+* Ruby MRI 1.8, 1.9 or Rubinius
 * A C compiler
 
 == Installation
@@ -80,12 +80,10 @@ See the unit tests for further examples.
 * More intuitive API
 * Release the GIL where appropriate
 * Support vectored I/O readv and writev
-* JRuby support
 * More examples
 * Stress tests
 * Better test coverage
 * Gem release
-* Assert encoding in 1.9 specific environments
 
 == Contact, feedback and bugs
 
