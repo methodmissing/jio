@@ -21,4 +21,6 @@ void rb_jio_free_transaction(void *ptr);
 
 VALUE rb_jio_file_new_transaction(VALUE obj, VALUE flags);
 
+void _init_rb_jio_transaction();
+
 #endif

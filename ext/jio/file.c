@@ -84,7 +84,6 @@ static VALUE rb_jio_file_sync(VALUE obj)
 
 static VALUE rb_jio_file_close(VALUE obj)
 {
-	int ret;
     JioGetFile(obj);
     TRAP_BEG;
     if (jclose(file->fs) != 0) return Qfalse;
